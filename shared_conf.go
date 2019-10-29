@@ -12,5 +12,5 @@ type AddTask struct {
 }
 
 var config = Configuration{
-	AMQPConnectionURL :"amqp://guest:guest@192.168.56.112:15672/",
+	AMQPConnectionURL :"amqp://adminone:ece1109043@192.168.56.112:5672/",
 }
