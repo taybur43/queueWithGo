@@ -1,34 +1,33 @@
 package main
 
 import(
-	"fmt"
+	//"fmt"
 	"github.com/streadway/amqp"
 	"log"
 	//"math/rand"
 	//"time"
 )
 
-func errorHandler(err error, msg string){
+func handleError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s:%s",msg,err)
-		fmt.Println("ok now")
-		panic("could not establish connection with RabbitMQ:" + err.Error())
+		log.Fatalf(" %s: %s", msg, err)
 	}else{
-		log.Fatalf("%s \n","connected")
-		fmt.Println("ok now")
+		log.Fatalf("%s","Connected...")
 	}
 
 }
 func main() {
+	//Dial up the connection...
 	conn, err := amqp.Dial(config.AMQPConnectionURL)
-	//errorHandler(err,"can not connect")
-	fmt.Println("testing working")
-	fmt.Printf("%s",err)
-	errorHandler(err,"can not connect")
-	//amqpChannel, err := conn.Channel()
-	//errorHandler(err, "Can't create a amqpChannel")
-	//queue, err := amqpChannel.QueueDeclare("add", true, false, false, false, nil)
-	//errorHandler(err, "Could not declare `add` queue")
-	//defer amqpChannel.Close()
+	handleError(err,"can not connect")
 	defer conn.Close()
+	//Create the channel ...
+	amqpChannel, err := conn.Channel()
+	handleError(err, "Can't create a amqpChannel")
+	defer amqpChannel.Close()
+	queue, err := amqpChannel.QueueDeclare("add", true, false, false, false, nil)
+	handleError(err, "Could not declare `add` queue")
+	err = amqpChannel.Qos(1, 0, false)
+	handleError(err, "Could not configure QoS")
+	
 }
